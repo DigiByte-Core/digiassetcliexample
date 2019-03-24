@@ -2,7 +2,9 @@
 CLI example for digiassets
 
 ## Installation
+```
   $ npm install -g digiassetexample
+```
 
 ## Requirements
   DigiByte wallet or another way to create digibyte addresses and sign transactions
@@ -16,4 +18,6 @@ CLI example for digiassets
 ```
 
 ## Running
+```
   $ digiassetexample
+```
