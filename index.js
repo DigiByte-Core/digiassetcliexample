@@ -48,7 +48,6 @@ function start () {
 }
 
 function getNewAddress () {
-  console.log(program)
   console.log("\x1b[32m%s\x1b[0m", 'Generating new address and sending 0.1 DGB to it');
   client.cmd('getnewaddress', (err, address) => {
     if (err) console.log(err);
