@@ -1,0 +1,27 @@
+{
+  "name": "digiassetcliexample",
+  "version": "1.0.0",
+  "description": "CLI example app for digiassets",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./index.js"
+  },
+  "preferGlobal": true,
+  "bin": "./index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/digicontributer/digiassetcliexample.git"
+  },
+  "dependencies": {
+    "bitcoin": "^3.0.1",
+    "commander": "^2.9.0",
+    "inquirer": "^3.0.6",
+    "request": "^2.88.0"
+  },
+  "author": "digicontributer",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/digicontributer/digiassetcliexample/issues"
+  },
+  "homepage": "https://github.com/digicontributer/digiassetcliexample#readme"
+}
