@@ -11,6 +11,7 @@ program
   .option('-u, --user <string>', 'Digibyte RPC User (default: user)')
   .option('-p, --password <string>', 'Digibyte RPC Password (default: password)')
   .option('-o, --port <number>', 'Digibyte RPC Port (default: 14022)')
+  .option('-v, --verbose', 'Enable verbose mode')
   .parse(process.argv);
 
 
@@ -52,8 +53,16 @@ function getNewAddress () {
   client.cmd('getnewaddress', (err, address) => {
     if (err) console.log(err);
     asset.issueAddress = address;
+    if (program.verbose) {
+      console.log("\x1b[32m%s\x1b[0m", 'Resonse:');
+      console.log("\x1b[33m%s\x1b[0m", JSON.stringify(address, null, 4));
+    }
     client.cmd('sendtoaddress', address, 0.1, (err, txid) => {
       if (err) console.log(err);
+      if (program.verbose) {
+        console.log("\x1b[32m%s\x1b[0m", 'Resonse:');
+        console.log("\x1b[33m%s\x1b[0m", JSON.stringify(txid, null, 4));
+      }
       return shouldContinue()
         .then(shouldContinue => gatherAssetData());
     });
@@ -89,7 +98,7 @@ function gatherAssetData () {
     {
       type: 'input',
       name: 'divisibility',
-      message: 'Asset Divisibility (0)'
+      message: 'Asset Divisibility (0-8)'
     },
     {
       type: 'list',
@@ -191,6 +200,10 @@ function issueAsset (assetData) {
     json: true
   }, (err, resp, body) => {
     if (err) console.log(err);
+    if (program.verbose) {
+      console.log("\x1b[32m%s\x1b[0m", 'Resonse:');
+      console.log("\x1b[33m%s\x1b[0m", JSON.stringify(body, null, 4));
+    }
     const txHex = body.txHex;
     if (hasOwnAddress) {
       console.log("\x1b[32m%s\x1b[0m", 'This raw transaction now needs to be signed with the private key, Once done we can broadcast the transaction');
@@ -235,6 +248,10 @@ function signRawTransaction (txHex) {
   console.log("\x1b[32m%s\x1b[0m", 'Signing the raw transaction');
   client.cmd('signrawtransactionwithwallet', txHex, (err, response) => {
     if (err) console.log(err);
+    if (program.verbose) {
+      console.log("\x1b[32m%s\x1b[0m", 'Resonse:');
+      console.log("\x1b[33m%s\x1b[0m", JSON.stringify(response, null, 4));
+    }
     return shouldContinue()
       .then(shouldContinue => broadcastTransaction(response.hex));
   });
@@ -260,6 +277,11 @@ function broadcastTransaction (signedTxHex) {
     },
     json: true
   }, (err, resp, body) => {
+    if (err) console.log(err);
+    if (program.verbose) {
+      console.log("\x1b[32m%s\x1b[0m", 'Resonse:');
+      console.log("\x1b[33m%s\x1b[0m", JSON.stringify(body, null, 4));
+    }
     const txid = body.txid;
     console.log("\x1b[32m%s\x1b[0m", 'Asset has been sent on the DigiByte Blockchain!!');
     console.log('TXID: ', txid);
@@ -275,6 +297,7 @@ function broadcastTransaction (signedTxHex) {
     },
     json: true
   }, (err, resp, body) => {
+    if (err) console.log(err);
     const txid = body.txid;
     console.log(txid);
   });
