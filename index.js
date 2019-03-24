@@ -285,6 +285,18 @@ function broadcastTransaction (signedTxHex) {
     const txid = body.txid;
     console.log("\x1b[32m%s\x1b[0m", 'Asset has been sent on the DigiByte Blockchain!!');
     console.log('TXID: ', txid);
+    return prompt({
+      type: 'list',
+      name: 'showFullCode',
+      message: 'Would you like to view the full code example?',
+      choices: ['yes', 'no']
+    })
+      .then(answer => {
+        if(answer.showFullCode === 'yes') {
+          return fullCodeExmaple();
+        }
+        process.exit();
+      });
   });
   console.log("\x1b[35m%s\x1b[0m", 'EXECUTING FUNCTION:');
   console.log('===================');
@@ -303,6 +315,77 @@ function broadcastTransaction (signedTxHex) {
   });
 }`);
   console.log('===================');
+  
+}
+
+function fullCodeExmaple (){
+  let address = null;
+  console.log("\x1b[32m%s\x1b[0m", `
+  
+const bitcoin = require('bitcoin');
+const Request = require('request');
+
+const asset = {
+  amount: 100,
+  fee: 5000,
+  divisibility: 0,
+  reissuable: false,
+  issueAddress: 'DP5WxcsK43K5BWpR6s4znrQqUMy4zHfEUV',
+  metadata: {
+    assetId: 1,
+    assetName: 'Test DigiAsset',
+    description: 'This is a test DigiAsset created from DigiAssetCLIExample',
+    urls: '[ { name: 'icon', url: 'https://avatars0.githubusercontent.com/u/6278682?s=400&v=4', mimeType: 'image/png', dataHash: '' } ]
+  }
+};
+
+function getNewAddress () {
+  client.cmd('getnewaddress', (err, address) => {
+    if (err) console.log(err);
+    asset.issueAddress = address;
+    client.cmd('sendtoaddress', address, 0.1, (err, txid) => {
+      if (err) console.log(err);
+      return issueAsset(asset);
+    });
+  });
+}
+
+function issueAsset (assetData) {
+  Request({
+    method: 'POST',
+    url: 'https://api.digiassets.net/v3/issue',
+    form: assetData,
+    headers: {'Content-Type': 'application/json'},
+    json: true
+  }, (err, resp, body) => {
+    if (err) console.log(err);
+    const txHex = body.txHex;
+    signRawTransaction(txHex);
+  });
+}
+
+function signRawTransaction (txHex) {
+  client.cmd('signrawtransactionwithwallet', txHex, (err, response) => {
+    if (err) console.log(err);
+    return broadcastTransaction(response.hex);
+  });
+}
+
+function broadcastTransaction (signedTxHex) {
+  Request({
+    method: 'POST',
+    url: 'https://api.digiassets.net/v3/broadcast',
+    form: {
+      txHex: signedTxHex
+    },
+    json: true
+  }, (err, resp, body) => {
+    if (err) console.log(err);
+    const txid = body.txid;
+    console.log('TXID: ', txid);
+  });
+}
+`)
 }
 
 function shouldContinue () {
