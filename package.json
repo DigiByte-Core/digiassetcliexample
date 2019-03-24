@@ -1,5 +1,5 @@
 {
-  "name": "digiassetcliexample",
+  "name": "digiassetexample",
   "version": "1.0.0",
   "description": "CLI example app for digiassets",
   "main": "index.js",
